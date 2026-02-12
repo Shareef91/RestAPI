@@ -1,21 +1,24 @@
 # Task Manager REST API (FastAPI)
 
-A lightweight REST API for managing tasks (create, list, delete) built with **FastAPI**. It’s designed as a simple, clean starter project for learning or prototyping.
+A lightweight REST API for managing tasks (create, list, update, delete) built with **FastAPI** and backed by **SQLite** via **SQLAlchemy**. It’s designed as a simple, clean starter project for learning or prototyping.
 
-> Note: This API uses an **in-memory** list for storage. Tasks reset when the server restarts.
+> Data is stored in a local SQLite file (`tasks.db`) created automatically on first run.
 
 ## Features
 
 - FastAPI-powered REST endpoints
 - Request validation via Pydantic models
 - Interactive API docs (Swagger UI) out of the box
-- Simple CRUD-style flow (List / Create / Delete)
+- Simple CRUD-style flow (List / Create / Update / Delete)
+- Persistent storage with SQLite + SQLAlchemy
 
 ## Tech Stack
 
 - Python 3.9+
 - FastAPI
 - Pydantic
+- SQLAlchemy
+- SQLite
 - Uvicorn (development server)
 
 ## Project Structure
@@ -57,12 +60,12 @@ Health-check style endpoint.
 **Response**
 
 ```json
-{ "message": "Task Manager API running" }
+{ "message": "Task Manager API running with SQLite" }
 ```
 
 ### `GET /tasks`
 
-Returns all tasks currently in memory.
+Returns all tasks currently stored in the SQLite database.
 
 **Response**
 
@@ -79,12 +82,26 @@ Creates a new task.
 **Request body**
 
 ```json
-{ "id": 1, "title": "Buy milk", "completed": false }
+{ "title": "Buy milk", "completed": false }
 ```
 
 **Response**
 
-Returns the created task.
+Returns the created task (including its server-generated `id`).
+
+### `PUT /tasks/{task_id}`
+
+Updates an existing task by `id`.
+
+**Request body**
+
+```json
+{ "title": "Buy milk (updated)", "completed": true }
+```
+
+**Response**
+
+Returns the updated task.
 
 ### `DELETE /tasks/{task_id}`
 
@@ -112,13 +129,13 @@ Deletes a task by its `id`.
 
 ## Notes / Limitations
 
-- Storage is **not persistent** (in-memory only).
-- No update endpoint yet.
-- No uniqueness checks for `id` (clients should avoid duplicates).
+- Creates/uses a local SQLite file named `tasks.db`.
+- Minimal error handling (missing IDs return a simple JSON error response).
+- No authentication/authorization.
 
 ## Next Improvements (Optional)
 
-- Add `PUT /tasks/{task_id}` to update a task
-- Auto-generate IDs on the server
-- Persist tasks using SQLite (via SQLModel or SQLAlchemy)
-- Add basic tests with `pytest`
+- Return proper HTTP status codes using `HTTPException` (e.g., 404 on missing task)
+- Add filtering/pagination for `GET /tasks`
+- Add database migrations (Alembic)
+- Add tests with `pytest`

@@ -12,3 +12,6 @@ venv/
 
 # Tooling
 .qodo/
+
+# Local database
+tasks.db
