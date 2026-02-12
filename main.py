@@ -28,3 +28,10 @@ def delete_task(task_id: int):
     global tasks
     tasks = [t for t in tasks if t.id != task_id]
     return {"status": "deleted"}
+@app.put("/tasks/{task_id}")
+def update_task(task_id: int, updated_task: Task):
+    for i, t in enumerate(tasks):
+        if t.id == task_id:
+            tasks[i] = updated_task
+            return updated_task
+    return {"error": "Task not found"}
